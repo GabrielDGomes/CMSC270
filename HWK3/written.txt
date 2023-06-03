@@ -1,0 +1,11 @@
+Q2. The best way would be to reference arrays in order to use them inside the function. Another possible
+way is simply using the arrays, since they are universal, and you can call them from wherever, and they
+retain their elements. The problem with both, that I haven't figured out still, is that you would a different
+amount of arrays, depending on how big the first one is, of course it would be a small difference of log n.
+I guess if you treat it almost exactly like traversing a tree, it would make it simpler, since we could go
+in one direction, then slowly work our way back to the original array.
+
+Q3. In most cases, using a linear seach on an unsorted array will be faster, since at worst we have O(n).
+Depending on how such array is sorted- it could be half sorted, parts of it could be sorted, etc- linear
+search is still better, but once we have a fully sorted array, then binary seach will always be better,
+since we have O(log n)

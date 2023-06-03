@@ -24,8 +24,6 @@ class ArrayDeque{
         T remove(int i);
 
         int getSize();
-
-        void clear();
 };
 
 template<class T>

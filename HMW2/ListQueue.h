@@ -9,10 +9,6 @@ class ListQueue {
         T _x;
         Node *_next;
         Node *_prev;
-
-        Node(T x){
-            _x = x;
-        }
     };
 
 	Node dummy;
@@ -51,13 +47,20 @@ public:
 template <class T>
 ListQueue<T>::ListQueue() {
 	_n = 0;
-    dummy = new Node(NULL);
+    dummy = new Node;
     dummy._next = &dummy;
     dummy._prev = &dummy;
 }
 
 template <class T>
-ListQueue<T>::~ListQueue(){}
+ListQueue<T>::~ListQueue(){
+    Node *u = dummy;
+	while (u->_next != nullptr) {
+		Node *w = u;
+		u = u->_next;
+		delete w;
+	}
+}
 
 
 template <class T>
@@ -81,7 +84,7 @@ typename ListQueue<T>::Node* ListQueue<T>::getNode(int i) {
             p = p->_next;          
         }
     } else {
-        p = &dummy;                     
+        p = &dummy;            
         for (int j = _n; j > i; j--) {
             p = p->_prev; 
         }
@@ -94,6 +97,7 @@ void ListQueue<T>::removeNode(Node *w) {
 	w->_prev->_next = w->_next; 
 	w->_next->_prev = w->_prev;
 	_n--;
+    delete w;
 }
 
 template<class T>

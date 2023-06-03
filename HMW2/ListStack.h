@@ -8,10 +8,6 @@ class ListStack {
     struct Node {
         T _x;
         Node *_next;
-
-        Node(T x){
-            _x = x;
-        }
     };
 
 	Node *_head;
@@ -60,7 +56,7 @@ ListStack<T>::~ListStack() {
 
 template<class T>
 T ListStack<T>::get(int i) {
-    Node *u = new Node(NULL);
+    Node *u = new Node;
     u = _head;
     for (int k = 0; k < i; k++) {
         u = u->_next;
@@ -71,7 +67,7 @@ T ListStack<T>::get(int i) {
 
 template<class T>
 void ListStack<T>::set(int i, T x) {
-    Node *u = new Node(NULL);
+    Node *u = new Node;
     u = _head;
     for (int k = 0; k < i; k++) {
         u = u->_next;
@@ -81,7 +77,8 @@ void ListStack<T>::set(int i, T x) {
 
 template<class T>
 void ListStack<T>::add(int i, T x) {
-    Node *u = new Node(x);      // new node to be added
+    Node *u = new Node;      // new node to be added
+    u->_x = x;
     Node* current = _head;      // start at the head 
     int position = 0;           // current position
 
@@ -145,36 +142,12 @@ T ListStack<T>::remove(int i) {
 
 template<class T>
 void ListStack<T>::push(T x) {
-	Node *u = new Node(x);     
-	if (_n == 0) {           // if there is no list, just create the head
-		_head = u;
-	} else {
-		_tail->_next = u;    // if there is a list, add to the tail 
-	}
-	_tail = u;  // whether or not there is an existing list, the new tail is the thing we just added
-	_n++;
+	add(0, x);
 }
 
 template <class T>
 T ListStack<T>::pop() {
-    
-    // special case where the list is empty
-	if (_n == 0)	{
-        return nullptr;
-    } 
-
-    //non-empty list
-    Node *u = _head;          // grab the old head before we do anything
-	T x = _head->_x;          // get the value that the head currently points to 
-	_head = _head->_next;    // set the new head to the old thing
-
-    _n--;                     // we got rid of something, so we have to decrease n
-	if (_n == 0) {            // last cleanup ; if we got rid of everything it's time to get rid of the tail pointer too 
-        _tail = nullptr;
-    } 
-
-    delete u;                // delete the old head manually (note we do NOT want to delete the head itself)
-	return x;
+    remove(0)
 }
 
 

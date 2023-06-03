@@ -1,125 +1,129 @@
+#ifndef DLLIST_H_                 
 
 template<class T>
-class DLList{
+class DLList {
     struct Node {
         T _x;
         Node *_next;
         Node *_prev;
-        Node(int x) {
-            _x = x;
-            _next = nullptr;
-            _prev = nullptr;
-        }
     };
 
-    Node *_head;
-	Node *_tail;
+	Node dummy;
 	int _n;
 
-    public:
-        //constructor
-        DLList();
+protected:
+    Node* getNode(int i);
 
-        // Destructor
-        ~DLList();
+    Node* addBefore(Node *w, T x);
 
-        Node* get_node(int i);
+    void removeNode(Node *w);
 
-        // gets ith element in the list
-        T get(int i);
+public:
 
-        // sets ith element to be x
-        T set(int i, T x);
+    DLList();
 
-        // ????
-        Node* add_before(Node w, T x);
+    ~DLList();
 
-        //
-        void add(int i, T x);
+    T get(int i);
+    T set(int i, T x);
 
-        //
-        void remove(Node w);
-        void remove(int i);
+    // add 
+    void add(int i, T x);
 
-        //
-        void remove(int i);
+    // remove
+    T remove(int i);
+
+    void display();
 };
 
-template<class T>
-DLList<T>::DLList(){
-    _n = 0;
-    Node dummy = new Node(nil);
-    dummy->_next = dummy;
-    dummy->_prev = dummy;
+template <class T>
+DLList<T>::DLList() {
+	_n = 0;
+    dummy._next = &dummy;
+    dummy._prev = &dummy;
 }
 
-template<class T>
-DLList<T>::~DLList() {
-	Node *u = dummy->_next;
-	while (u != nullptr) {
+template <class T>
+DLList<T>::~DLList(){
+    Node *u = dummy;
+	while (u->_next != nullptr) {
 		Node *w = u;
 		u = u->_next;
 		delete w;
 	}
 }
 
-template<class T>
-typename DLList<T>::Node* DLList<T>::get_node(int i){
-    Node *p;
-    if(i<(n/2)){
-        p = dummy->_next
-        for (int k = 0; k < i; i++){
-            p = p->_next;
-        }
-    }
-    else {
-        p = dummy;
-        for (int k = 0; k < n-i; i++){
-            p = p->_prev
-        }
-    }
-    return p;
-}
 
-template<class T>
-T DLList<T>::get(int i){
-    return get_node(i)->_x;
-}
-
-template<class T>
-T DLList<T>::set(int i, T x){
-    Node u = get_node(i);
-    T y = u->_x;
+template <class T>
+typename DLList<T>::Node* DLList<T>::addBefore(Node *w, T x) {
+    Node *u = new Node;       
     u->_x = x;
-    return y;
+    u->_prev = w->_prev;         
+    u->_next = w;                
+    u->_next->_prev = u;         
+    u->_prev->_next = u;         
+    _n++;
+    return u;                   
+}
+
+template <class T>
+typename DLList<T>::Node* DLList<T>::getNode(int i) {
+    Node* p;           
+    if (i < _n/2) {
+        p = dummy._next;                
+        for (int j = 0; j < i; j++) {
+            p = p->_next;          
+        }
+    } else {
+        p = &dummy;                     
+        for (int j = _n; j > i; j--) {
+            p = p->_prev; 
+        }
+    }
+    return p;                  
 }
 
 template<class T>
-typename DLList<T>::Node* DLList<T>::add_before(Node w, T x){
-    Node u = new Node(x);
-    u->_prev = w->_prev;
-    u->next = w;
-    u->_next->_prev = u;
-    u->_prev->_next = u;
-    n++;
-    return u;
-}
-
-template<class T>
-void DLList<T>::add(int i, T x){
-    add_before(get_node(i), x);
-}
-
-template<class T>
-void DLList<T>::remove(Node w){
-    w->_prev->_next = w->_next;
-    w->_next->_prev = w->_prev;
-    n--;
+void DLList<T>::removeNode(Node *w) {
+	w->_prev->_next = w->_next; 
+	w->_next->_prev = w->_prev;
+	_n--;
     delete w;
 }
 
 template<class T>
-void DLList<T>::remove(int i){
-    remove(get_node(i));
+T DLList<T>::get(int i) {
+    return getNode(i)->_x;
 }
 
+template<class T>
+T DLList<T>::set(int i, T x) {
+	Node* u = getNode(i);
+	T y = u->_x;
+	u->_x = x;
+	return y;
+}
+
+template<class T>
+void DLList<T>::add(int i, T x) {
+    addBefore(getNode(i), x);
+}
+
+template<class T>
+T DLList<T>::remove(int i) {
+	Node *w = getNode(i);
+	T x = w->_x;
+	removeNode(w);
+	return x;
+}
+
+template<class T>
+void DLList<T>::display() {
+    for (int i = 0; i < _n; i++) {
+        std::cout << get(i) << " ";
+    }
+    std::cout << std::endl;
+}
+
+
+#endif /*DLLIST_H_*/
