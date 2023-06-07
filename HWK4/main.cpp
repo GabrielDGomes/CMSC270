@@ -2,20 +2,52 @@
 #include <string>
 #include "BinarySearchTree.h"
 
-int main() {
-    BST<int> tree1 = BST<int>(50); 
-    tree1.add(17);
-    tree1.add(12);
-    tree1.add(9);
-    tree1.add(14);
-    tree1.add(19);
-    tree1.add(23);
-    tree1.add(72);
-    tree1.add(76);
-    tree1.add(54);
-    tree1.add(12);
-    tree1.add(67);
+class Test
+{
+    BST<int>* testTree;
 
+public:
+    Test(int x)
+    {
+        testTree = new BST<int>(x);
+    }
+
+    ~Test()
+    {
+        delete testTree;
+    }
+
+    bool addToTree(int x)
+    {
+        bool result = testTree->add(x);
+        return result;
+    }
+
+    void showNode(int x)
+    {
+        testTree->showNode(x);
+    }
+};
+
+int main()
+{
+    Test tree1 = Test(50);
+    tree1.addToTree(17);
+    tree1.addToTree(12);
+    tree1.addToTree(9);
+    tree1.addToTree(14);
+    tree1.addToTree(19);
+    tree1.addToTree(23);
+    tree1.addToTree(72);
+    tree1.addToTree(76);
+    tree1.addToTree(54);
+    tree1.addToTree(12);
+    tree1.addToTree(67);
+
+    tree1.showNode(9);
     tree1.showNode(50);
-    
+    tree1.showNode(72);
+    tree1.showNode(33);
+
+    return 0;
 }

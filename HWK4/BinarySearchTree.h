@@ -1,9 +1,8 @@
 #include <iostream>
 #include <string>
 #include <queue>
-
-#ifndef BINARYSEARCHTREE_H_
-#define BINARYSEARCHTREE_H_
+#ifndef BINARYSEARCHTREE_H_ // "header guards"
+#define BINARYSEARCHTREE_H_ // prevents double inclusion
 
 template <class T>
 class BST
@@ -14,59 +13,62 @@ class BST
         Node *_parent;
         Node *_left;
         Node *_right;
-
-        Node(T x, Node *parent = nullptr, Node *left = nullptr, Node *right = nullptr)
-            : _x(x), _parent(parent), _left(left), _right(right) {}
     };
-
     int _n;
-    Node *_root;
+    Node* _root;
 
 public:
     // constructor
     BST();
+
     BST(T x);
 
     // destructor
     ~BST();
 
-    // is x in the tree?
-    bool isElement(T x) const;
-    Node *find(T x) const;
+    Node *find(T x);
 
     void splice(Node *u);
-    void remove_Node(Node *u);
-    bool add_child(Node *p, Node *u);
-    bool add(T x);
-    T remove(T x);
 
-    int size() const;
-    void showNode(T x) const;
-    void bf_tranverse() const;
+    void remove_Node(Node *u);
+
+    bool add_child(Node *p, Node *u);
+
+    bool add(T x);
+
+    Node *find_last(T x);
+
+    void remove(T x);
+
+    int size();
+
+    void showNode(T x);
+
+    void bf_tranverse();
 };
 
 template <class T>
 BST<T>::BST()
 {
     _n = 0;
-    _root = nullptr;
 }
 
 template <class T>
 BST<T>::BST(T x)
 {
-    _n = 1;
-    _root = new Node(x);
+    _n = 0;
+    _root = new Node;
+    _root->_x = x;
+    _root->_parent = nullptr;
+    _root->_left = nullptr;
+    _root->_right = nullptr;
 }
 
 template <class T>
-BST<T>::~BST()
-{
-    // TODO: Implement destructor to deallocate memory
-}
+BST<T>::~BST() {}
 
 template <class T>
-bool BST<T>::isElement(T x) const
+typename BST<T>::Node* BST<T>::find(T x)
 {
     Node *currentNode = _root;
     while (currentNode != nullptr)
@@ -81,28 +83,10 @@ bool BST<T>::isElement(T x) const
         }
         else
         {
-            return true;
+            return currentNode;
         }
     }
-    return false;
-}
-
-template <class T>
-typename BST<T>::Node *BST<T>::find(T x) const
-{
-    Node *w = _root;
-    while (w != nullptr && w->_x != x)
-    {
-        if (x < w->_x)
-        {
-            w = w->_left;
-        }
-        else
-        {
-            w = w->_right;
-        }
-    }
-    return w;
+    return nullptr;
 }
 
 template <class T>
@@ -112,36 +96,61 @@ bool BST<T>::add_child(Node *p, Node *u)
     {
         _root = u;
     }
-    else if (u->_x < p->_x)
-    {
-        p->_left = u;
-    }
-    else if (u->_x > p->_x)
-    {
-        p->_right = u;
-    }
     else
     {
-        return false; // Duplicate value
+        if (u->_x < p->_x)
+        {
+            p->_left = u;
+        }
+        else if (u->_x > p->_x)
+        {
+            p->_right = u;
+        }
+        else
+        {
+            return false;
+        }
+        u->_parent = p;
     }
-    u->_parent = p;
     _n++;
     return true;
 }
-
 template <class T>
 bool BST<T>::add(T x)
 {
-    Node *p = find(x);
-    Node *xNew = new Node(x);
+    Node *p = find_last(x);
+    Node *xNew = new Node;
+    xNew->_x = x;
+    xNew->_left = xNew->_right = nullptr;
     return add_child(p, xNew);
 }
 
-template <class T>
+template<class T>
+typename BST<T>::Node* BST<T>::find_last(T x) {
+    Node *w = _root;
+    Node *prev = new Node;
+    while (w != nullptr){
+        prev = w;
+        if (x < w->_x){
+            w = w->_left;
+        }
+        else if (x>w->_x)
+        {
+            w = w->_right;
+        }
+        else{
+            return w;
+        }
+    }
+    return prev;
+}
+
+template<class T>
 void BST<T>::splice(Node *u)
 {
-    Node *s, *p;
-    if (u->_left != nullptr)
+    Node *s;
+    Node *p;
+    if (u->_left == nullptr)
     {
         s = u->_left;
     }
@@ -149,7 +158,6 @@ void BST<T>::splice(Node *u)
     {
         s = u->_right;
     }
-
     if (u == _root)
     {
         _root = s;
@@ -167,122 +175,107 @@ void BST<T>::splice(Node *u)
             p->_right = s;
         }
     }
-
     if (s != nullptr)
     {
         s->_parent = p;
     }
-
-    delete u;
     _n--;
 }
 
 template <class T>
 void BST<T>::remove_Node(Node *u)
 {
-    if (u->_left == nullptr || u->_right == nullptr)
+    Node *w;
+    if ((u->_left == nullptr) || (u->_right == nullptr))
     {
         splice(u);
     }
     else
     {
-        Node *w = u->_right;
+        w = u->_right;
         while (w->_left != nullptr)
         {
             w = w->_left;
         }
         u->_x = w->_x;
-        remove_Node(w);
+        splice(w);
     }
 }
 
 template <class T>
-T BST<T>::remove(T x)
+void BST<T>::remove(T x)
 {
     Node *u = find(x);
-    if (u == nullptr)
-    {
-        return T(); // Return default value for type T if element not found
-    }
     remove_Node(u);
-    return x;
 }
 
 template <class T>
-int BST<T>::size() const
+int BST<T>::size()
 {
     return _n;
 }
 
 template <class T>
-void BST<T>::showNode(T x) const
+void BST<T>::showNode(T x)
 {
     Node *u = find(x);
-    if (isElement(x)) {
+
+    if (u == nullptr)
+    {
         std::cout << "Node not found." << std::endl;
         return;
     }
-    std::cout << "Parent: ";
-    if (u->_parent != nullptr)
+
+    std::cout << "Node value: " << u->_x << std::endl;
+
+    if (u->_left == nullptr)
     {
-        std::cout << u->_parent->_x;
+        std::cout << "Left child: Null" << std::endl;
     }
     else
     {
-        std::cout << "Null";
+        std::cout << "Left child: " << u->_left->_x << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << "Left child: ";
-    if (u->_left != nullptr)
+
+    if (u->_right == nullptr)
     {
-        std::cout << u->_left->_x;
+        std::cout << "Right child: Null" << std::endl;
     }
     else
     {
-        std::cout << "Null";
+        std::cout << "Right child: " << u->_right->_x << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << "Right child: ";
-    if (u->_right != nullptr)
+
+    if (u->_parent == nullptr)
     {
-        std::cout << u->_right->_x;
+        std::cout << "Parent: Null" << std::endl;
     }
     else
     {
-        std::cout << "Null";
+        std::cout << "Parent: " << u->_parent->_x << std::endl;
     }
-    std::cout << std::endl;
 }
-
-
-
-
 template <class T>
-void BST<T>::bf_tranverse() const
+void BST<T>::bf_tranverse()
 {
-    std::queue<Node *> q;
-    if (_root != nullptr)
+    Node *r = _root;
+    std::queue<Node*> q;
+    if (r != nullptr)
     {
-        q.push(_root);
+        q.push(r);
     }
-
     while (!q.empty())
     {
         Node *u = q.front();
         q.pop();
-
-        std::cout << u->_x << " ";
-
         if (u->_left != nullptr)
         {
             q.push(u->_left);
         }
-
         if (u->_right != nullptr)
         {
             q.push(u->_right);
         }
     }
 }
-
-#endif /* BINARYSEARCHTREE_H_ */
+#endif /*BINARYSEARCHTREE_H_*/
