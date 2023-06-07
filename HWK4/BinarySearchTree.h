@@ -260,6 +260,7 @@ void BST<T>::bf_tranverse()
 {
     Node *r = _root;
     std::queue<Node*> q;
+
     if (r != nullptr)
     {
         q.push(r);
@@ -268,6 +269,8 @@ void BST<T>::bf_tranverse()
     {
         Node *u = q.front();
         q.pop();
+        std::cout << u->_x << " ";
+        
         if (u->_left != nullptr)
         {
             q.push(u->_left);
@@ -277,5 +280,6 @@ void BST<T>::bf_tranverse()
             q.push(u->_right);
         }
     }
+    std::cout << std::endl;
 }
 #endif /*BINARYSEARCHTREE_H_*/
